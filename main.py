@@ -7,11 +7,11 @@ from start import Start
 pygame.init()
 pygame.font.init()
 my_font = pygame.font.SysFont('Arial', 20)
-my_starter_font = pygame.font.SysFont('Bebas Nueue', 40)
+my_starter_font = pygame.font.SysFont('Bebas Nueue', 60)
 pygame.display.set_caption("Word Bomb")
 
 b = Bomb(200,200)
-s = Start(200,220)
+s = Start(0,220)
 
 size = (800, 600)
 screen = pygame.display.set_mode(size)
@@ -38,6 +38,8 @@ def word_check(word):
 
 #messages to be blitten
 start_message = my_starter_font.render("Welcome to Word Bomb!", True, (255,255,255))
+picked_word_display = my_starter_font.render("LOADING PREFIX/SUFFIX...", True, (255,255,255))
+guessed_word_display = my_starter_font.render("ENTER WORD HERE", True, (255,255,255))
 
 #variables
 chosen_words = []
@@ -47,16 +49,21 @@ hearts = 3
 run = True
 GameStart = False
 
-if not GameStart:
+
+
+
+
+
+while run:
   for event in pygame.event.get():
-    if event.type == pygame.MOUSEBUTTONUP:
-      pos = pygame.mouse.get_pos()
-      if s.rect.collidepoint(pos):
-        GameStart = True
-
-
-
-while run and GameStart:
+    print("hi")
+    if event.type == pygame.QUIT:  # If user clicked close
+        run = False
+    if event.type == pygame.MOUSEBUTTONUP and not GameStart:
+        pos = pygame.mouse.get_pos()
+        if s.rect.collidepoint(pos):
+             GameStart = True
+  print('hello')
   if GameStart:
    x = 0
    guessed_word_checker = []
@@ -68,7 +75,9 @@ while run and GameStart:
    print(picked_word)
    for letters in picked_word:
      word.append(letters)
+
    guessed_word = input("Enter your word here: ")
+   guessed_word_display = my_starter_font.render(guessed_word, True, (255,255,255))
    guessed_word = guessed_word.upper()
    legible_word = word_check(guessed_word)
    if legible_word == True:
@@ -98,17 +107,20 @@ while run and GameStart:
    else:
     print("That's not right! ")
     hearts = hearts - 1
+ screen.fill((245, 14, 14))
+ if not GameStart:
+     screen.blit(start_message, (160, 160))
+     screen.blit(s.image, s.rect)
+ if GameStart:
+     screen.blit(picked_word_display, (180, 200))
+     screen.blit(b.image, b.rect)
+     screen.blit(guessed_word_display, (200, 280))
+ pygame.display.update()
+
 
 
 
 
 #BLIT
 while run:
-  screen.fill((0, 0, 0))
-  if not GameStart:
-    screen.blit(start_message, (200, 200))
-    screen.blit(s.image, s.rect)
-  if GameStart:
-    screen.blit(picked_word_display, True, (180,200))
-    screen.blit(b.image, b.rect)
-  pygame.display.update()
+
