@@ -16,6 +16,7 @@ s = Start(0,220)
 size = (800, 600)
 screen = pygame.display.set_mode(size)
 
+
 def pick_word():
   words = []
   f = open("letters", "r")
@@ -63,6 +64,28 @@ while run:
         pos = pygame.mouse.get_pos()
         if s.rect.collidepoint(pos):
              GameStart = True
+             text_box = pygame.Rect(1000, 50, 280, 40)
+             text_box_color = (0, 0, 0)
+             text_box_active = False
+             file_name = ""
+             file_name_message = my_font.render(file_name, True, (0, 0, 0))
+    if event.type == pygame.KEYUP and text_box_active:
+        if event.key == 8:
+            file_name = file_name[0:len(file_name) - 1]
+            file_name_message = my_font.render(file_name, True, (0, 0, 0))
+        else:
+            file_name += event.unicode
+            file_name_message = my_font.render(file_name, True, (0, 0, 0))
+    if event.type == pygame.MOUSEBUTTONUP:
+        # activate the text box
+        if text_box.collidepoint(event.pos):
+            text_box_color = (0, 0, 255)
+            text_box_active = True
+        # de-activate the text box
+        else:
+            text_box_color = (0, 0, 0)
+            text_box_active = False
+
   print('hello')
   if GameStart:
    x = 0
@@ -107,20 +130,18 @@ while run:
    else:
     print("That's not right! ")
     hearts = hearts - 1
- screen.fill((245, 14, 14))
- if not GameStart:
-     screen.blit(start_message, (160, 160))
-     screen.blit(s.image, s.rect)
- if GameStart:
-     screen.blit(picked_word_display, (180, 200))
-     screen.blit(b.image, b.rect)
-     screen.blit(guessed_word_display, (200, 280))
- pygame.display.update()
+  screen.fill((245, 14, 14))
+  if not GameStart:
+      screen.blit(start_message, (160, 160))
+      screen.blit(s.image, s.rect)
+  if GameStart:
+      screen.blit(picked_word_display, (180, 200))
+      screen.blit(b.image, b.rect)
+  pygame.display.update()
 
 
 
 
 
-#BLIT
-while run:
+
 
