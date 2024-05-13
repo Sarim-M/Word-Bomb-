@@ -13,6 +13,7 @@ pygame.display.set_caption("Word Bomb")
 b = Bomb(200,200)
 s = Start(0,220)
 
+score = 0
 size = (800, 600)
 screen = pygame.display.set_mode(size)
 
@@ -57,25 +58,28 @@ GameStart = False
 
 while run:
   for event in pygame.event.get():
-    print("hi")
+
     if event.type == pygame.QUIT:  # If user clicked close
         run = False
     if event.type == pygame.MOUSEBUTTONUP and not GameStart:
         pos = pygame.mouse.get_pos()
         if s.rect.collidepoint(pos):
              GameStart = True
-             text_box = pygame.Rect(1000, 50, 280, 40)
+             text_box = pygame.Rect(100, 50, 200, 40)
              text_box_color = (0, 0, 0)
-             text_box_active = False
-             file_name = ""
+             text_box_active = True
+             file_name = "a"
              file_name_message = my_font.render(file_name, True, (0, 0, 0))
     if event.type == pygame.KEYUP and text_box_active:
         if event.key == 8:
             file_name = file_name[0:len(file_name) - 1]
             file_name_message = my_font.render(file_name, True, (0, 0, 0))
         else:
-            file_name += event.unicode
-            file_name_message = my_font.render(file_name, True, (0, 0, 0))
+            if event.key == 9:
+                text_box_active = False
+            else:
+                file_name += event.unicode
+                file_name_message = my_font.render(file_name, True, (0, 0, 0))
     if event.type == pygame.MOUSEBUTTONUP:
         # activate the text box
         if text_box.collidepoint(event.pos):
@@ -86,7 +90,7 @@ while run:
             text_box_color = (0, 0, 0)
             text_box_active = False
 
-  print('hello')
+
   if GameStart:
    x = 0
    guessed_word_checker = []
@@ -94,42 +98,49 @@ while run:
    correct_letters = 0
    picked_word = pick_word()
    picked_word_display = my_starter_font.render(picked_word, True, (255,255,255))
-   print("Write a word that you haven't already used and includes:")
-   print(picked_word)
+
    for letters in picked_word:
      word.append(letters)
 
-   guessed_word = input("Enter your word here: ")
-   guessed_word_display = my_starter_font.render(guessed_word, True, (255,255,255))
-   guessed_word = guessed_word.upper()
-   legible_word = word_check(guessed_word)
-   if legible_word == True:
-     for letters in guessed_word:
-       guessed_word_checker.append(letters)
-     for i in guessed_word_checker:
-       guessed_word_checker_list_length = len(guessed_word_checker)
-     try:
-       if i == word[x] and x <= guessed_word_checker_list_length:
-         correct_letters = correct_letters + 1
-       if correct_letters != len(word):
-        x = x + 1
-     except IndexError as e:
-      print("Loading....")
-     except Exception as e:
-      print("An error has occurred:", e)
-     if correct_letters >= len(word):
-       chosen_words.append(guessed_word)
-       score = score + 10
-       print(score)
-       print("Correct!")
-     else:
-      print("Thats not right!")
-      hearts = hearts - 1
+
+   file_name = file_name.upper()
+   keys = pygame.key.get_pressed()
+   if keys[pygame.K_TAB]:
+    print(file_name)
+    legible_word = word_check(file_name)
+    if legible_word == True:
+      for letters in file_name:
+        guessed_word_checker.append(letters)
+        print(guessed_word_checker)
+      for i in guessed_word_checker:
+        guessed_word_checker_list_length = len(guessed_word_checker)
+        print(guessed_word_checker_list_length)
+        try:
+         if i == word[x] and x <= guessed_word_checker_list_length:
+           correct_letters = correct_letters + 1
+           print(correct_letters)
+         if correct_letters != len(word):
+          x = x + 1
+        except IndexError as e:
+         print("Loading....")
+        except Exception as e:
+         print("An error has occurred:", e)
+      if correct_letters >= len(word):
+        chosen_words.append(file_name)
+        score = score + 10
+        print(score)
+        print("Correct!")
+      else:
+       print("Thats not right!")
+       print("teehee")
+       print(correct_letters)
+       hearts = hearts - 1
 
 
-   else:
-    print("That's not right! ")
-    hearts = hearts - 1
+    else:
+     print("That's not right! ")
+     print("hoohaa")
+     hearts = hearts - 1
   screen.fill((245, 14, 14))
   if not GameStart:
       screen.blit(start_message, (160, 160))
@@ -137,6 +148,8 @@ while run:
   if GameStart:
       screen.blit(picked_word_display, (180, 200))
       screen.blit(b.image, b.rect)
+      pygame.draw.rect(screen, text_box_color, text_box, 3)
+      screen.blit(file_name_message, (100,50))
   pygame.display.update()
 
 
