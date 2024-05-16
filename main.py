@@ -10,7 +10,7 @@ my_font = pygame.font.SysFont('Arial', 20)
 my_starter_font = pygame.font.SysFont('Bebas Nueue', 60)
 pygame.display.set_caption("Word Bomb")
 
-b = Bomb(200,200)
+b = Bomb(230,50)
 s = Start(0,220)
 
 score = 0
@@ -42,6 +42,7 @@ def word_check(word):
 start_message = my_starter_font.render("Welcome to Word Bomb!", True, (255,255,255))
 picked_word_display = my_starter_font.render("LOADING PREFIX/SUFFIX...", True, (255,255,255))
 guessed_word_display = my_starter_font.render("ENTER WORD HERE", True, (255,255,255))
+guessing_message = my_font.render("Write a word that you haven't already used and includes:", True, (255,255,255))
 
 #variables
 chosen_words = []
@@ -50,6 +51,7 @@ hearts = 3
 #program switches
 run = True
 GameStart = False
+GuessedYet = False
 
 
 
@@ -65,7 +67,7 @@ while run:
         pos = pygame.mouse.get_pos()
         if s.rect.collidepoint(pos):
              GameStart = True
-             text_box = pygame.Rect(100, 50, 200, 40)
+             text_box = pygame.Rect(270, 530, 200, 40)
              text_box_color = (0, 0, 0)
              text_box_active = True
              file_name = "a"
@@ -96,8 +98,12 @@ while run:
    guessed_word_checker = []
    word = []
    correct_letters = 0
-   picked_word = pick_word()
-   picked_word_display = my_starter_font.render(picked_word, True, (255,255,255))
+   if not GuessedYet:
+     picked_word = pick_word()
+     picked_word_display = my_starter_font.render(picked_word, True, (255,255,255))
+   for letters in picked_word:
+       word.append(letters)
+
 
    for letters in picked_word:
      word.append(letters)
@@ -106,6 +112,7 @@ while run:
    file_name = file_name.upper()
    keys = pygame.key.get_pressed()
    if keys[pygame.K_TAB]:
+    GuessedYet = True
     print(file_name)
     legible_word = word_check(file_name)
     if legible_word == True:
@@ -125,7 +132,9 @@ while run:
          print("Loading....")
         except Exception as e:
          print("An error has occurred:", e)
-      if correct_letters >= len(word):
+      print(correct_letters)
+      print(len(word))
+      if correct_letters >= (len(word))/2:
         chosen_words.append(file_name)
         score = score + 10
         print(score)
@@ -146,7 +155,8 @@ while run:
       screen.blit(start_message, (160, 160))
       screen.blit(s.image, s.rect)
   if GameStart:
-      screen.blit(picked_word_display, (180, 200))
+      screen.blit(picked_word_display, (350, 60))
+      screen.blit(guessing_message,(200,30))
       screen.blit(b.image, b.rect)
       pygame.draw.rect(screen, text_box_color, text_box, 3)
       screen.blit(file_name_message, (100,50))
