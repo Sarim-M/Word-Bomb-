@@ -98,15 +98,17 @@ while run:
    guessed_word_checker = []
    word = []
    correct_letters = 0
+   current_time = str(int(11 - (time.time() - start_time)))
+   real_current_time = round(time.time() - start_time, 2)
    if not GuessedYet:
      picked_word = pick_word()
      picked_word_display = my_starter_font.render(picked_word, True, (255,255,255))
-   for letters in picked_word:
-       word.append(letters)
+     GuessedYet = True
+     for letters in picked_word:
+         word.append(letters)
+         print(word)
 
 
-   for letters in picked_word:
-     word.append(letters)
 
 
    file_name = file_name.upper()
@@ -116,6 +118,7 @@ while run:
     print(file_name)
     legible_word = word_check(file_name)
     if legible_word == True:
+      silly = True
       for letters in file_name:
         guessed_word_checker.append(letters)
         print(guessed_word_checker)
@@ -125,16 +128,16 @@ while run:
         try:
          if i == word[x] and x <= guessed_word_checker_list_length:
            correct_letters = correct_letters + 1
-           print(correct_letters)
+           print("Correct letters first check: " + str(correct_letters))
          if correct_letters != len(word):
           x = x + 1
         except IndexError as e:
          print("Loading....")
         except Exception as e:
          print("An error has occurred:", e)
-      print(correct_letters)
-      print(len(word))
-      if correct_letters >= (len(word))/2:
+      print("Correct letters" + str(correct_letters))
+      print("Len(word): " + str(len(word)))
+      if correct_letters >= (len(word)):
         chosen_words.append(file_name)
         score = score + 10
         print(score)
@@ -147,9 +150,12 @@ while run:
 
 
     else:
-     print("That's not right! ")
-     print("hoohaa")
-     hearts = hearts - 1
+     if not silly:
+         print("That's not right! ")
+         print("hoohaa")
+         hearts = hearts - 1
+    silly = False
+    GuessedYet = False
   screen.fill((245, 14, 14))
   if not GameStart:
       screen.blit(start_message, (160, 160))
