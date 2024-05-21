@@ -3,6 +3,7 @@ import random
 import pygame
 from bomb import Bomb
 from start import Start
+import time
 
 pygame.init()
 pygame.font.init()
@@ -13,10 +14,11 @@ pygame.display.set_caption("Word Bomb")
 b = Bomb(230,50)
 s = Start(0,220)
 
+
 score = 0
 size = (800, 600)
 screen = pygame.display.set_mode(size)
-
+start_time = time.time()
 
 def pick_word():
   words = []
@@ -43,6 +45,7 @@ start_message = my_starter_font.render("Welcome to Word Bomb!", True, (255,255,2
 picked_word_display = my_starter_font.render("LOADING PREFIX/SUFFIX...", True, (255,255,255))
 guessed_word_display = my_starter_font.render("ENTER WORD HERE", True, (255,255,255))
 guessing_message = my_font.render("Write a word that you haven't already used and includes:", True, (255,255,255))
+time_message = my_font.render("Loading...", True, (255,255,255))
 
 #variables
 chosen_words = []
@@ -52,7 +55,7 @@ hearts = 3
 run = True
 GameStart = False
 GuessedYet = False
-
+usage = 0
 
 
 
@@ -98,9 +101,16 @@ while run:
    guessed_word_checker = []
    word = []
    correct_letters = 0
-   current_time = str(int(11 - (time.time() - start_time)))
-   real_current_time = round(time.time() - start_time, 2)
-   if not GuessedYet:
+   current_time = (int(11 - (time.time() - start_time)))
+   if current_time >= 0:
+     current_time = str(current_time)
+     time_message = my_font.render(current_time, True, (255,255,255))
+   KeyPressed = False
+
+   if usage == 1:
+       usage = 0
+
+   if usage == 0 and not GuessedYet:
      picked_word = pick_word()
      picked_word_display = my_starter_font.render(picked_word, True, (255,255,255))
      GuessedYet = True
@@ -113,8 +123,9 @@ while run:
 
    file_name = file_name.upper()
    keys = pygame.key.get_pressed()
-   if keys[pygame.K_TAB]:
+   if keys[pygame.K_TAB] and not KeyPressed:
     GuessedYet = True
+    KeyPressed = True
     print(file_name)
     legible_word = word_check(file_name)
     if legible_word == True:
@@ -137,25 +148,30 @@ while run:
          print("An error has occurred:", e)
       print("Correct letters" + str(correct_letters))
       print("Len(word): " + str(len(word)))
-      if correct_letters >= (len(word)):
+      if correct_letters >= (len(word)) and int(current_time) >= 0:
         chosen_words.append(file_name)
         score = score + 10
         print(score)
         print("Correct!")
+        current_time = int(current_time) + 10
       else:
        print("Thats not right!")
        print("teehee")
        print(correct_letters)
        hearts = hearts - 1
+      print(silly)
+
+
 
 
     else:
-     if not silly:
+      if not silly:
          print("That's not right! ")
          print("hoohaa")
          hearts = hearts - 1
+    print(silly)
     silly = False
-    GuessedYet = False
+    usage = 1
   screen.fill((245, 14, 14))
   if not GameStart:
       screen.blit(start_message, (160, 160))
@@ -166,6 +182,7 @@ while run:
       screen.blit(b.image, b.rect)
       pygame.draw.rect(screen, text_box_color, text_box, 3)
       screen.blit(file_name_message, (100,50))
+      screen.blit(time_message, (100,60))
   pygame.display.update()
 
 
