@@ -64,38 +64,8 @@ usage = 0
 
 
 while run:
-  for event in pygame.event.get():
 
-    if event.type == pygame.QUIT:  # If user clicked close
-        run = False
-    if event.type == pygame.MOUSEBUTTONUP and not GameStart:
-        pos = pygame.mouse.get_pos()
-        if s.rect.collidepoint(pos):
-             GameStart = True
-             text_box = pygame.Rect(270, 530, 200, 40)
-             text_box_color = (0, 0, 0)
-             text_box_active = True
-             file_name = "a"
-             file_name_message = my_font.render(file_name, True, (0, 0, 0))
-    if event.type == pygame.KEYUP and text_box_active:
-        if event.key == 8:
-            file_name = file_name[0:len(file_name) - 1]
-            file_name_message = my_font.render(file_name, True, (0, 0, 0))
-        else:
-            if event.key == 9:
-                text_box_active = False
-            else:
-                file_name += event.unicode
-                file_name_message = my_font.render(file_name, True, (0, 0, 0))
-    if event.type == pygame.MOUSEBUTTONUP:
-        # activate the text box
-        if text_box.collidepoint(event.pos):
-            text_box_color = (0, 0, 255)
-            text_box_active = True
-        # de-activate the text box
-        else:
-            text_box_color = (0, 0, 0)
-            text_box_active = False
+
 
 
   if GameStart:
@@ -124,61 +94,92 @@ while run:
    file_name = file_name.upper()
    keys = pygame.key.get_pressed()
    for event in pygame.event.get():
+       print("hello")
+       if event.type == pygame.QUIT:  # If user clicked close
+           run = False
+       if event.type == pygame.MOUSEBUTTONUP and not GameStart:
+           pos = pygame.mouse.get_pos()
+           if s.rect.collidepoint(pos):
+               GameStart = True
+               text_box = pygame.Rect(270, 530, 200, 40)
+               text_box_color = (0, 0, 0)
+               text_box_active = True
+               file_name = "a"
+               file_name_message = my_font.render(file_name, True, (0, 0, 0))
+       if event.type == pygame.KEYUP and text_box_active:
+           if event.key == 8:
+               file_name = file_name[0:len(file_name) - 1]
+               file_name_message = my_font.render(file_name, True, (0, 0, 0))
+           else:
+               if event.key == 9:
+                   text_box_active = False
+               else:
+                   file_name += event.unicode
+                   file_name_message = my_font.render(file_name, True, (0, 0, 0))
+       if event.type == pygame.MOUSEBUTTONUP:
+           # activate the text box
+           if text_box.collidepoint(event.pos):
+               text_box_color = (0, 0, 255)
+               text_box_active = True
+           # de-activate the text box
+           else:
+               text_box_color = (0, 0, 0)
+               text_box_active = False
        if event.type == pygame.KEYUP:
+           print("hi")
            if event.key == pygame.K_TAB:
             GuessedYet = True
             KeyPressed = True
             print(file_name)
             legible_word = word_check(file_name)
             if legible_word == True:
-            silly = True
-            for letters in file_name:
-             guessed_word_checker.append(letters)
-             print(guessed_word_checker)
-            for i in guessed_word_checker:
-              guessed_word_checker_list_length = len(guessed_word_checker)
-              print(guessed_word_checker_list_length)
-              try:
-               if i == word[x] and x <= guessed_word_checker_list_length:
-                correct_letters = correct_letters + 1
-                print("Correct letters first check: " + str(correct_letters))
-               if correct_letters != len(word):
-                 x = x + 1
-              except IndexError as e:
-               print("Loading....")
-              except Exception as e:
-               print("An error has occurred:", e)
-            print("Correct letters" + str(correct_letters))
-            print("Len(word): " + str(len(word)))
-            if correct_letters >= (len(word)) and int(current_time) >= 0:
-             chosen_words.append(file_name)
-             score = score + 10
-             score_message = my_font.render("Score: " + str(score), True, (255,255,255))
-             print(score)
-             print("Correct!")
-             start_time = time.time()
-             GuessedYet = False
-      else:
-       print("Thats not right!")
-       print("teehee")
-       print(correct_letters)
-       hearts = hearts - 1
-       hearts_message = my_font.render("Hearts: " + str(hearts), True, (255,255,255))
-       GuessedYet = False
-      print(silly)
+              silly = True
+              for letters in file_name:
+                guessed_word_checker.append(letters)
+                print(guessed_word_checker)
+              for i in guessed_word_checker:
+                guessed_word_checker_list_length = len(guessed_word_checker)
+                print(guessed_word_checker_list_length)
+                try:
+                  if i == word[x] and x <= guessed_word_checker_list_length:
+                    correct_letters = correct_letters + 1
+                    print("Correct letters first check: " + str(correct_letters))
+                  if correct_letters != len(word):
+                    x = x + 1
+                except IndexError as e:
+                  print("Loading....")
+                except Exception as e:
+                  print("An error has occurred:", e)
+              print("Correct letters" + str(correct_letters))
+              print("Len(word): " + str(len(word)))
+              if correct_letters >= (len(word)) and int(current_time) >= 0:
+                chosen_words.append(file_name)
+                score = score + 10
+                score_message = my_font.render("Score: " + str(score), True, (255,255,255))
+                print(score)
+                print("Correct!")
+                start_time = time.time()
+                GuessedYet = False
+              else:
+                print("Thats not right!")
+                print("teehee")
+                print(correct_letters)
+                hearts = hearts - 1
+                hearts_message = my_font.render("Hearts: " + str(hearts), True, (255,255,255))
+                GuessedYet = False
+                print(silly)
 
 
 
 
-    else:
-      if not silly:
-         print("That's not right! ")
-         print("hoohaa")
-         hearts = hearts - 1
-         hearts_message = my_font.render("Hearts: " + str(hearts), True, (255, 255, 255))
-         GuessedYet = False
-    print(silly)
-    silly = False
+            else:
+              if not silly:
+                print("That's not right! ")
+                print("hoohaa")
+                hearts = hearts - 1
+                hearts_message = my_font.render("Hearts: " + str(hearts), True, (255, 255, 255))
+                GuessedYet = False
+           silly = False
   screen.fill((245, 14, 14))
   if not GameStart:
       screen.blit(start_message, (160, 160))
