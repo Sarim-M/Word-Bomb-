@@ -57,6 +57,7 @@ hearts = 3
 run = True
 GameStart = False
 GuessedYet = False
+done = False
 usage = 0
 
 
@@ -64,7 +65,6 @@ usage = 0
 
 
 while run:
-
 
 
 
@@ -90,14 +90,15 @@ while run:
 
 
 
-
    file_name = file_name.upper()
    keys = pygame.key.get_pressed()
+   print("swalala")
    for event in pygame.event.get():
        print("hello")
        if event.type == pygame.QUIT:  # If user clicked close
            run = False
        if event.type == pygame.MOUSEBUTTONUP and not GameStart:
+           print("yes")
            pos = pygame.mouse.get_pos()
            if s.rect.collidepoint(pos):
                GameStart = True
@@ -125,7 +126,7 @@ while run:
            else:
                text_box_color = (0, 0, 0)
                text_box_active = False
-       if event.type == pygame.KEYUP:
+       if event.type == pygame.KEYUP and GameStart:
            print("hi")
            if event.key == pygame.K_TAB:
             GuessedYet = True
