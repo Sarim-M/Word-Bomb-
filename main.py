@@ -4,6 +4,7 @@ import pygame
 from bomb import Bomb
 from start import Start
 import time
+from heart import Heart
 
 pygame.init()
 pygame.font.init()
@@ -11,12 +12,13 @@ my_font = pygame.font.SysFont('Arial', 20)
 my_starter_font = pygame.font.SysFont('Bebas Nueue', 60)
 pygame.display.set_caption("Word Bomb")
 
-b = Bomb(230,50)
-s = Start(0,220)
+b = Bomb(700,100)
+s = Start(550,350)
+h = Heart(1750,100)
 
 
 score = 0
-size = (800, 600)
+size = (1920, 1040)
 screen = pygame.display.set_mode(size)
 start_time = time.time()
 
@@ -42,12 +44,11 @@ def word_check(word):
 
 #messages to be blitten
 start_message = my_starter_font.render("Welcome to Word Bomb!", True, (255,255,255))
-picked_word_display = my_starter_font.render("LOADING PREFIX/SUFFIX...", True, (255,255,255))
+picked_word_display = my_starter_font.render("EMPTY TEXT BOX TO BEGIN", True, (255,255,255))
 guessed_word_display = my_starter_font.render("ENTER WORD HERE", True, (255,255,255))
 guessing_message = my_font.render("Write a word that you haven't already used and includes:", True, (255,255,255))
 time_message = my_font.render("Loading...", True, (255,255,255))
-score_message = my_font.render("Score: 0", True, (255,255,255))
-hearts_message = my_font.render("Hearts = 3", True, (255,255,255))
+text_box_warning = my_starter_font.render("EMPTY TEXT BOX TO CONTINUE", True, (255,255,255))
 
 #variables
 chosen_words = []
@@ -57,15 +58,46 @@ hearts = 3
 run = True
 GameStart = False
 GuessedYet = False
-done = False
+Warning = False
 usage = 0
-
+current_word = "ora"
 
 
 
 
 while run:
+  for event in pygame.event.get():
 
+    if event.type == pygame.QUIT:  # If user clicked close
+        run = False
+    if event.type == pygame.MOUSEBUTTONUP and not GameStart:
+        pos = pygame.mouse.get_pos()
+        if s.rect.collidepoint(pos):
+             GameStart = True
+             text_box = pygame.Rect(600, 850, 700, 100)
+             text_box_color = (0, 0, 0)
+             text_box_active = True
+             file_name = "a"
+             file_name_message = my_font.render(file_name, True, (0, 0, 0))
+    if event.type == pygame.KEYUP and text_box_active:
+        if event.key == 8:
+            file_name = file_name[0:len(file_name) - 1]
+            file_name_message = my_font.render(file_name, True, (0, 0, 0))
+        else:
+            if event.key == 9:
+                text_box_active = False
+            else:
+                file_name += event.unicode
+                file_name_message = my_font.render(file_name, True, (0, 0, 0))
+    if event.type == pygame.MOUSEBUTTONUP:
+        # activate the text box
+        if text_box.collidepoint(event.pos):
+            text_box_color = (0, 0, 255)
+            text_box_active = True
+        # de-activate the text box
+        else:
+            text_box_color = (0, 0, 0)
+            text_box_active = False
 
 
   if GameStart:
@@ -79,121 +111,99 @@ while run:
      time_message = my_font.render(current_time, True, (255,255,255))
    KeyPressed = False
 
+   if usage == 1:
+       usage = 0
 
-   if not GuessedYet:
+   if usage == 0 and not GuessedYet and len(file_name) == 0:
      picked_word = pick_word()
      picked_word_display = my_starter_font.render(picked_word, True, (255,255,255))
      GuessedYet = True
      for letters in picked_word:
          word.append(letters)
          print(word)
+   if len(file_name) == 0:
+       Warning = False
+
 
 
 
    file_name = file_name.upper()
    keys = pygame.key.get_pressed()
-   print("swalala")
-   for event in pygame.event.get():
-       print("hello")
-       if event.type == pygame.QUIT:  # If user clicked close
-           run = False
-       if event.type == pygame.MOUSEBUTTONUP and not GameStart:
-           print("yes")
-           pos = pygame.mouse.get_pos()
-           if s.rect.collidepoint(pos):
-               GameStart = True
-               text_box = pygame.Rect(270, 530, 200, 40)
-               text_box_color = (0, 0, 0)
-               text_box_active = True
-               file_name = "a"
-               file_name_message = my_font.render(file_name, True, (0, 0, 0))
-       if event.type == pygame.KEYUP and text_box_active:
-           if event.key == 8:
-               file_name = file_name[0:len(file_name) - 1]
-               file_name_message = my_font.render(file_name, True, (0, 0, 0))
-           else:
-               if event.key == 9:
-                   text_box_active = False
-               else:
-                   file_name += event.unicode
-                   file_name_message = my_font.render(file_name, True, (0, 0, 0))
-       if event.type == pygame.MOUSEBUTTONUP:
-           # activate the text box
-           if text_box.collidepoint(event.pos):
-               text_box_color = (0, 0, 255)
-               text_box_active = True
-           # de-activate the text box
-           else:
-               text_box_color = (0, 0, 0)
-               text_box_active = False
-       if event.type == pygame.KEYUP and GameStart:
-           print("hi")
-           if event.key == pygame.K_TAB:
-            GuessedYet = True
-            KeyPressed = True
-            print(file_name)
-            legible_word = word_check(file_name)
-            if legible_word == True:
-              silly = True
-              for letters in file_name:
-                guessed_word_checker.append(letters)
-                print(guessed_word_checker)
-              for i in guessed_word_checker:
-                guessed_word_checker_list_length = len(guessed_word_checker)
-                print(guessed_word_checker_list_length)
-                try:
-                  if i == word[x] and x <= guessed_word_checker_list_length:
-                    correct_letters = correct_letters + 1
-                    print("Correct letters first check: " + str(correct_letters))
-                  if correct_letters != len(word):
-                    x = x + 1
-                except IndexError as e:
-                  print("Loading....")
-                except Exception as e:
-                  print("An error has occurred:", e)
-              print("Correct letters" + str(correct_letters))
-              print("Len(word): " + str(len(word)))
-              if correct_letters >= (len(word)) and int(current_time) >= 0:
-                chosen_words.append(file_name)
-                score = score + 10
-                score_message = my_font.render("Score: " + str(score), True, (255,255,255))
-                print(score)
-                print("Correct!")
-                start_time = time.time()
-                GuessedYet = False
-              else:
-                print("Thats not right!")
-                print("teehee")
-                print(correct_letters)
-                hearts = hearts - 1
-                hearts_message = my_font.render("Hearts: " + str(hearts), True, (255,255,255))
-                GuessedYet = False
-                print(silly)
+   if keys[pygame.K_TAB] and not KeyPressed and file_name != current_word:
+    current_word = file_name
+    Warning = False
+    GuessedYet = True
+    KeyPressed = True
+    print("WORD PRINT 1: " + str(file_name))
+    legible_word = word_check(file_name)
+    if legible_word == True:
+      silly = True
+      print("silly status 1: " + str(silly))
+      for letters in file_name:
+        guessed_word_checker.append(letters)
+        print(guessed_word_checker)
+      for i in guessed_word_checker:
+        guessed_word_checker_list_length = len(guessed_word_checker)
+        print(guessed_word_checker_list_length)
+        try:
+         if i == word[x] and x <= guessed_word_checker_list_length:
+           correct_letters = correct_letters + 1
+           print("Correct letters first check: " + str(correct_letters))
+         if correct_letters != len(word):
+          x = x + 1
+        except IndexError as e:
+         print("Loading....")
+        except Exception as e:
+         print("An error has occurred:", e)
+      print("Correct letters" + str(correct_letters))
+      print("Len(word): " + str(len(word)))
+      if correct_letters >= (len(word)) and int(current_time) >= 0:
+        chosen_words.append(file_name)
+        score = score + 10
+        print(score)
+        print("Correct!")
+        start_time = time.time()
+        GuessedYet = False
+        Warning = True
+        print(Warning)
+      else:
+       print("Thats not right!")
+       print("teehee")
+       print(correct_letters)
+       hearts = hearts - 1
+       Warning = True
+      print(silly)
 
 
 
 
-            else:
-              if not silly:
-                print("That's not right! ")
-                print("hoohaa")
-                hearts = hearts - 1
-                hearts_message = my_font.render("Hearts: " + str(hearts), True, (255, 255, 255))
-                GuessedYet = False
-           silly = False
+    else:
+      if not silly:
+         print("That's not right! ")
+         print("hoohaa")
+         hearts = hearts - 1
+         GuessedYet = False
+         warning = True
+    print(silly)
+    silly = False
+    usage = 1
   screen.fill((245, 14, 14))
   if not GameStart:
-      screen.blit(start_message, (160, 160))
+      screen.blit(start_message, (700, 200))
       screen.blit(s.image, s.rect)
   if GameStart:
-      screen.blit(picked_word_display, (350, 60))
-      screen.blit(guessing_message,(200,30))
+      if not Warning:
+          screen.blit(picked_word_display, (830, 60))
+      screen.blit(guessing_message,(730,30))
       screen.blit(b.image, b.rect)
       pygame.draw.rect(screen, text_box_color, text_box, 3)
-      screen.blit(file_name_message, (100,50))
+      screen.blit(file_name_message, (1000,60))
       screen.blit(time_message, (100,60))
-      screen.blit(score_message, (100,70))
-      screen.blit(hearts_message, (100,90))
+      screen.blit(h.image, h.rect)
+      if len(file_name) > 0 and Warning:
+          screen.blit(text_box_warning, (650,60))
+
+
   pygame.display.update()
 
 
