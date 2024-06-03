@@ -5,6 +5,7 @@ from bomb import Bomb
 from start import Start
 import time
 from heart import Heart
+from broken_heart import XHeart
 
 pygame.init()
 pygame.font.init()
@@ -14,7 +15,13 @@ pygame.display.set_caption("Word Bomb")
 
 b = Bomb(700,100)
 s = Start(550,350)
-h = Heart(1750,100)
+h_one = Heart(1750,100)
+h_two = Heart(1610, 100)
+h_three = Heart(1470, 100)
+xh_one = XHeart(1750,100)
+xh_two = XHeart(1610,100)
+xh_three = XHeart(1470,100)
+
 
 
 score = 0
@@ -39,7 +46,7 @@ def word_check(word):
     for i in chosen_words:
       if i == word:
         return False
-  return True
+    return True
 
 
 #messages to be blitten
@@ -49,6 +56,8 @@ guessed_word_display = my_starter_font.render("ENTER WORD HERE", True, (255,255,
 guessing_message = my_font.render("Write a word that you haven't already used and includes:", True, (255,255,255))
 time_message = my_font.render("Loading...", True, (255,255,255))
 text_box_warning = my_starter_font.render("EMPTY TEXT BOX TO CONTINUE", True, (255,255,255))
+score_message = my_starter_font.render("Words: 0", True, (255,255,255))
+hearts_msg = my_font.render("hi", True, (255,255,255))
 
 #variables
 chosen_words = []
@@ -59,6 +68,7 @@ run = True
 GameStart = False
 GuessedYet = False
 Warning = False
+silly = False
 usage = 0
 current_word = "ora"
 
@@ -105,7 +115,7 @@ while run:
    guessed_word_checker = []
    word = []
    correct_letters = 0
-   current_time = (int(11 - (time.time() - start_time)))
+   current_time = (int(21 - (time.time() - start_time)))
    if current_time >= 0:
      current_time = str(current_time)
      time_message = my_font.render(current_time, True, (255,255,255))
@@ -130,12 +140,14 @@ while run:
    file_name = file_name.upper()
    keys = pygame.key.get_pressed()
    if keys[pygame.K_TAB] and not KeyPressed and file_name != current_word:
+    x = 0
     current_word = file_name
     Warning = False
     GuessedYet = True
     KeyPressed = True
     print("WORD PRINT 1: " + str(file_name))
     legible_word = word_check(file_name)
+    print("Legibility check: " + str(legible_word))
     if legible_word == True:
       silly = True
       print("silly status 1: " + str(silly))
@@ -149,8 +161,11 @@ while run:
          if i == word[x] and x <= guessed_word_checker_list_length:
            correct_letters = correct_letters + 1
            print("Correct letters first check: " + str(correct_letters))
+         else:
+             print("no correct letter deteced: ", str(i) + " " + str(word[x]))
          if correct_letters != len(word):
           x = x + 1
+          print("X VALUE: " + str(x))
         except IndexError as e:
          print("Loading....")
         except Exception as e:
@@ -159,7 +174,8 @@ while run:
       print("Len(word): " + str(len(word)))
       if correct_letters >= (len(word)) and int(current_time) >= 0:
         chosen_words.append(file_name)
-        score = score + 10
+        score = score + 1
+        score_message = my_starter_font.render("Words: " + str(score), True, (255,255,255))
         print(score)
         print("Correct!")
         start_time = time.time()
@@ -171,6 +187,7 @@ while run:
        print("teehee")
        print(correct_letters)
        hearts = hearts - 1
+       hearts_msg = my_font.render(str(hearts), True, (255,255,255))
        Warning = True
       print(silly)
 
@@ -182,6 +199,7 @@ while run:
          print("That's not right! ")
          print("hoohaa")
          hearts = hearts - 1
+         hearts_msg =  my_font.render(str(hearts), True, (255,255,255))
          GuessedYet = False
          warning = True
     print(silly)
@@ -199,7 +217,20 @@ while run:
       pygame.draw.rect(screen, text_box_color, text_box, 3)
       screen.blit(file_name_message, (1000,60))
       screen.blit(time_message, (100,60))
-      screen.blit(h.image, h.rect)
+      screen.blit(hearts_msg, (700, 30))
+      screen.blit(score_message, (300,900))
+      if hearts >= 3:
+          screen.blit(h_one.image, h_one.rect)
+      else:
+          screen.blit(xh_one.image, xh_one.rect)
+      if hearts >= 2:
+          screen.blit(h_two.image, h_two.rect)
+      else:
+          screen.blit(xh_two.image, xh_two.rect)
+      if hearts >= 1:
+         screen.blit(h_three.image, h_three.rect)
+      else:
+          screen.blit(xh_three.image, xh_three.rect)
       if len(file_name) > 0 and Warning:
           screen.blit(text_box_warning, (650,60))
 
