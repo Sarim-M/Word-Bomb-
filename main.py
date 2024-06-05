@@ -131,6 +131,7 @@ while run:
      for letters in picked_word:
          word.append(letters)
          print(word)
+         print(len(word))
    if len(file_name) == 0:
        Warning = False
 
@@ -142,6 +143,7 @@ while run:
    if keys[pygame.K_TAB] and not KeyPressed and file_name != current_word:
     x = 0
     current_word = file_name
+    print("LEN(WORD)" + str(len(word)))
     Warning = False
     GuessedYet = True
     KeyPressed = True
