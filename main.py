@@ -6,12 +6,15 @@ from start import Start
 import time
 from heart import Heart
 from broken_heart import XHeart
+from explosion import Explode
 
 pygame.init()
 pygame.font.init()
 my_font = pygame.font.SysFont('Arial', 20)
-my_starter_font = pygame.font.SysFont('Bebas Nueue', 60)
+my_starter_font = pygame.font.SysFont('impact', 60)
 pygame.display.set_caption("Word Bomb")
+iral = pygame.font.get_fonts()
+print(iral)
 
 b = Bomb(700,100)
 s = Start(550,350)
@@ -21,6 +24,7 @@ h_three = Heart(1470, 100)
 xh_one = XHeart(1750,100)
 xh_two = XHeart(1610,100)
 xh_three = XHeart(1470,100)
+e = Explode(500,200)
 
 
 
@@ -58,10 +62,12 @@ time_message = my_font.render("Loading...", True, (255,255,255))
 text_box_warning = my_starter_font.render("EMPTY TEXT BOX TO CONTINUE", True, (255,255,255))
 score_message = my_starter_font.render("Words: 0", True, (255,255,255))
 hearts_msg = my_font.render("hi", True, (255,255,255))
+game_over_message = my_starter_font.render("GAME OVER", True, (255,255,255))
 
 #variables
 chosen_words = []
 hearts = 3
+word = []
 
 #program switches
 run = True
@@ -69,6 +75,7 @@ GameStart = False
 GuessedYet = False
 Warning = False
 silly = False
+GameOver = False
 usage = 0
 current_word = "ora"
 
@@ -113,7 +120,6 @@ while run:
   if GameStart:
    x = 0
    guessed_word_checker = []
-   word = []
    correct_letters = 0
    current_time = (int(21 - (time.time() - start_time)))
    if current_time >= 0:
@@ -122,28 +128,27 @@ while run:
    KeyPressed = False
 
    if usage == 1:
-       usage = 0
+     usage = 0
 
    if usage == 0 and not GuessedYet and len(file_name) == 0:
+     word = []
      picked_word = pick_word()
      picked_word_display = my_starter_font.render(picked_word, True, (255,255,255))
      GuessedYet = True
      for letters in picked_word:
          word.append(letters)
          print(word)
-         print(len(word))
+         print("PRIMARY LEN(WORD) CHECK: " + str(len(word)))
    if len(file_name) == 0:
-       Warning = False
-
-
-
+     Warning = False
 
    file_name = file_name.upper()
    keys = pygame.key.get_pressed()
    if keys[pygame.K_TAB] and not KeyPressed and file_name != current_word:
+    print("SECONDARY LEN(WORD) CHECK: " + str(len(word)))
     x = 0
     current_word = file_name
-    print("LEN(WORD)" + str(len(word)))
+    print(word)
     Warning = False
     GuessedYet = True
     KeyPressed = True
@@ -158,12 +163,13 @@ while run:
         print(guessed_word_checker)
       for i in guessed_word_checker:
         guessed_word_checker_list_length = len(guessed_word_checker)
-        print(guessed_word_checker_list_length)
+        print("GUESSED WORD CHECKER LIST LENGTH CHECK ONE: " + str(guessed_word_checker_list_length))
         try:
          if i == word[x] and x <= guessed_word_checker_list_length:
            correct_letters = correct_letters + 1
            print("Correct letters first check: " + str(correct_letters))
          else:
+             print("WORD AT INDEX " + str(x) + ": " + str(word[x]))
              print("no correct letter deteced: ", str(i) + " " + str(word[x]))
          if correct_letters != len(word):
           x = x + 1
@@ -213,9 +219,12 @@ while run:
       screen.blit(s.image, s.rect)
   if GameStart:
       if not Warning:
-          screen.blit(picked_word_display, (830, 60))
+          screen.blit(picked_word_display, (850, 60))
       screen.blit(guessing_message,(730,30))
-      screen.blit(b.image, b.rect)
+      if hearts >= 1:
+        screen.blit(b.image, b.rect)
+      else:
+          screen.blit(e.image, e.rect)
       pygame.draw.rect(screen, text_box_color, text_box, 3)
       screen.blit(file_name_message, (1000,60))
       screen.blit(time_message, (100,60))
