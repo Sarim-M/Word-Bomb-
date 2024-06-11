@@ -1,13 +1,14 @@
 import enchant
 import random
 import pygame
+import time
 from bomb import Bomb
 from start import Start
-import time
 from heart import Heart
 from broken_heart import XHeart
 from explosion import Explode
 
+#Text
 pygame.init()
 pygame.font.init()
 my_font = pygame.font.SysFont('Arial', 20)
@@ -26,13 +27,13 @@ xh_two = XHeart(1610,100)
 xh_three = XHeart(1470,100)
 e = Explode(500,200)
 
-
-
+#preparations
 score = 0
 size = (1920, 1040)
 screen = pygame.display.set_mode(size)
 start_time = time.time()
 
+#functions
 def pick_word():
   words = []
   f = open("letters", "r")
@@ -71,26 +72,26 @@ word = []
 
 #program switches
 run = True
-GameStart = False
-GuessedYet = False
-Warning = False
+game_start = False
+guessed_yet = False
+warning = False
 silly = False
-GameOver = False
+game_over = False
 usage = 0
 current_word = "ora"
 
 
 
-
+#MAIN LOOP
 while run:
   for event in pygame.event.get():
 
     if event.type == pygame.QUIT:  # If user clicked close
       run = False
-    if event.type == pygame.MOUSEBUTTONUP and not GameStart:
+    if event.type == pygame.MOUSEBUTTONUP and not game_start:
       pos = pygame.mouse.get_pos()
       if s.rect.collidepoint(pos):
-        GameStart = True
+        game_start = True
         text_box = pygame.Rect(600, 850, 700, 100)
         text_box_color = (0, 0, 0)
         text_box_active = True
@@ -117,7 +118,8 @@ while run:
         text_box_active = False
 
 
-  if GameStart:
+  #once game begins
+  if game_start:
     x = 0
     guessed_word_checker = []
     correct_letters = 0
@@ -125,62 +127,59 @@ while run:
     if current_time >= 0:
       current_time = str(current_time)
       time_message = my_font.render(current_time, True, (255,255,255))
-    KeyPressed = False
+    key_pressed = False
 
     if usage == 1:
       usage = 0
 
-    if usage == 0 and not GuessedYet and len(file_name) == 0:
+    if usage == 0 and not guessed_yet and len(file_name) == 0:
       word = []
       picked_word = pick_word()
       picked_word_display = my_starter_font.render(picked_word, True, (255,255,255))
-      GuessedYet = True
+      guessed_yet = True
       for letters in picked_word:
         word.append(letters)
-        print(word)
     if len(file_name) == 0:
-      Warning = False
+      warning = False
 
     file_name = file_name.upper()
     keys = pygame.key.get_pressed()
-    if keys[pygame.K_TAB] and not KeyPressed and file_name != current_word:
+    if keys[pygame.K_TAB] and not key_pressed and file_name != current_word:
       x = 0
       current_word = file_name
-      Warning = False
-      GuessedYet = True
-      KeyPressed = True
+      warning = False
+      guessed_yet = True
+      key_pressed = True
       legible_word = word_check(file_name)
       if legible_word == True:
         silly = True
         for letters in file_name:
           guessed_word_checker.append(letters)
-          print(guessed_word_checker)
         for i in guessed_word_checker:
           guessed_word_checker_list_length = len(guessed_word_checker)
           try:
             if i == word[x] and x <= guessed_word_checker_list_length:
               correct_letters = correct_letters + 1
-              print("Correct letters first check: " + str(correct_letters))
             else:
               print("WORD AT INDEX " + str(x) + ": " + str(word[x]))
               print("no correct letter deteced: ", str(i) + " " + str(word[x]))
             if correct_letters != len(word):
               x = x + 1
-          except IndexError as e:
+          except IndexError as u:
             print("Loading....")
-          except Exception as e:
-            print("An error has occurred:", e)
+          except Exception as u:
+            print("An error has occurred:", u)
         if correct_letters >= (len(word)) and int(current_time) >= 0:
           chosen_words.append(file_name)
           score = score + 1
           score_message = my_starter_font.render("Words: " + str(score), True, (255,255,255))
           start_time = time.time()
-          GuessedYet = False
-          Warning = True
+          guessed_yet = False
+          warning = True
         else:
           hearts = hearts - 1
           hearts_msg = my_font.render(str(hearts), True, (255,255,255))
-          Warning = True
+          warning = True
 
 
 
@@ -188,16 +187,18 @@ while run:
         if not silly:
           hearts = hearts - 1
           hearts_msg =  my_font.render(str(hearts), True, (255,255,255))
-          GuessedYet = False
-          Warning = True
+          guessed_yet = False
+          warning = True
     silly = False
     usage = 1
+
+  #BLIT ZONE
   screen.fill((245, 14, 14))
-  if not GameStart:
+  if not game_start:
       screen.blit(start_message, (700, 200))
       screen.blit(s.image, s.rect)
-  if GameStart:
-      if not Warning:
+  if game_start:
+      if not warning:
           screen.blit(picked_word_display, (850, 60))
       screen.blit(guessing_message,(730,30))
       if hearts >= 1:
@@ -222,7 +223,7 @@ while run:
          screen.blit(h_three.image, h_three.rect)
       else:
           screen.blit(xh_three.image, xh_three.rect)
-      if len(file_name) > 0 and Warning:
+      if len(file_name) > 0 and warning:
           screen.blit(text_box_warning, (650,60))
 
 
