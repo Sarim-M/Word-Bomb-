@@ -97,7 +97,7 @@ while run:
         text_box_active = True
         file_name = "a"
         file_name_message = my_font.render(file_name, True, (0, 0, 0))
-    if event.type == pygame.KEYUP and text_box_active:
+    if event.type == pygame.KEYUP and text_box_active and not game_over:
       if event.key == 8:
         file_name = file_name[0:len(file_name) - 1]
         file_name_message = my_font.render(file_name, True, (0, 0, 0))
@@ -191,6 +191,8 @@ while run:
           warning = True
     silly = False
     usage = 1
+    if hearts <= 0:
+      game_over = True
 
   #BLIT ZONE
   screen.fill((245, 14, 14))
@@ -201,7 +203,7 @@ while run:
       if not warning:
           screen.blit(picked_word_display, (850, 60))
       screen.blit(guessing_message,(730,30))
-      if hearts >= 1:
+      if hearts >= 1 and int(current_time) >= 1:
         screen.blit(b.image, b.rect)
       else:
           screen.blit(e.image, e.rect)
@@ -211,15 +213,15 @@ while run:
       screen.blit(time_message, (100,60))
       screen.blit(hearts_msg, (700, 30))
       screen.blit(score_message, (300,900))
-      if hearts >= 3:
+      if hearts >= 3 and int(current_time) >= 1:
           screen.blit(h_one.image, h_one.rect)
       else:
           screen.blit(xh_one.image, xh_one.rect)
-      if hearts >= 2:
+      if hearts >= 2 and int(current_time) >= 1:
           screen.blit(h_two.image, h_two.rect)
       else:
           screen.blit(xh_two.image, xh_two.rect)
-      if hearts >= 1:
+      if hearts >= 1 and int(current_time) >= 1:
          screen.blit(h_three.image, h_three.rect)
       else:
           screen.blit(xh_three.image, xh_three.rect)
