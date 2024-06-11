@@ -12,9 +12,9 @@ pygame.init()
 pygame.font.init()
 my_font = pygame.font.SysFont('Arial', 20)
 my_starter_font = pygame.font.SysFont('impact', 60)
+my_super_font = pygame.font.SysFont('impact', 250)
 pygame.display.set_caption("Word Bomb")
-iral = pygame.font.get_fonts()
-print(iral)
+
 
 b = Bomb(700,100)
 s = Start(550,350)
@@ -62,7 +62,7 @@ time_message = my_font.render("Loading...", True, (255,255,255))
 text_box_warning = my_starter_font.render("EMPTY TEXT BOX TO CONTINUE", True, (255,255,255))
 score_message = my_starter_font.render("Words: 0", True, (255,255,255))
 hearts_msg = my_font.render("hi", True, (255,255,255))
-game_over_message = my_starter_font.render("GAME OVER", True, (255,255,255))
+game_over_message = my_super_font.render("GAME OVER", True, (255,255,255))
 
 #variables
 chosen_words = []
@@ -204,6 +204,7 @@ while run:
         screen.blit(b.image, b.rect)
       else:
           screen.blit(e.image, e.rect)
+          screen.blit(game_over_message, (400,300))
       pygame.draw.rect(screen, text_box_color, text_box, 3)
       screen.blit(file_name_message, (1000,60))
       screen.blit(time_message, (100,60))
